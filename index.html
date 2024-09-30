@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的照片集</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+        }
+        nav {
+            background-color: #444;
+            color: #fff;
+            padding: 0.5rem;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin-right: 10px;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            padding: 20px;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-gap: 20px;
+        }
+        .gallery img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .cover-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>我的照片集</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#home">首页</a></li>
+            <li><a href="#gallery">相册</a></li>
+            <li><a href="#about">关于</a></li>
+            <li><a href="#contact">联系</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <section id="home">
+            <h2>欢迎来到我的照片集</h2>
+            <div class="image-container">
+                <img id="coverImage" src="pic/DSC_8337.JPG" alt="封面照片" class="cover-image">
+                <button id="toggleButton">切换图片</button>
+            </div>
+            <p>这里展示了我最喜欢的照片作品。希望您能喜欢！</p>
+        </section>
+
+        <section id="gallery" class="gallery">
+            <!-- 图片将通过 JavaScript 动态加载 -->
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 我的照片集. 保留所有权利。</p>
+    </footer>
+
+    <script>
+        const gallery = document.getElementById('gallery');
+        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+        const numberOfImagesToTry = 20; // 尝试加载的图片数量
+
+        for (let i = 1; i <= numberOfImagesToTry; i++) {
+            imageExtensions.forEach(ext => {
+                const img = document.createElement('img');
+                img.src = `@pic/${i}.${ext}`;
+                img.alt = `照片${i}`;
+                img.onerror = function() {
+                    this.style.display = 'none'; // 如果图片加载失败，隐藏它
+                };
+                img.onload = function() {
+                    this.style.display = 'block'; // 如果图片加载成功，显示它
+                    console.log(`成功加载图片: ${this.src}`);
+                };
+                gallery.appendChild(img);
+            });
+        }
+
+        // 修改图片切换功能
+        const images = [
+            "pic/DSC_8337.JPG",
+            "pic/mmexport1575896258845.jpg"
+        ];
+        let currentIndex = 0;
+
+        const coverImage = document.getElementById('coverImage');
+        const toggleButton = document.getElementById('toggleButton');
+
+        toggleButton.addEventListener('click', () => {
+            coverImage.classList.add('fade');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % images.length;
+                coverImage.src = images[currentIndex];
+                coverImage.classList.remove('fade');
+            }, 500);
+        });
+
+        // 添加调试信息
+        window.onload = function() {
+            console.log("页面加载完成");
+            setTimeout(() => {
+                var images = document.getElementsByTagName('img');
+                var loadedImages = 0;
+                for (var i = 0; i < images.length; i++) {
+                    if (images[i].complete && images[i].naturalHeight !== 0) {
+                        console.log("图片 " + (i+1) + " 加载成功: " + images[i].src);
+                        loadedImages++;
+                    }
+                }
+                console.log(`总共加载成功 ${loadedImages} 张图片`);
+                if (loadedImages === 0) {
+                    gallery.innerHTML = '<p>抱歉，没有找到可以显示的图片。</p>';
+                }
+            }, 2000); // 延迟2秒，确保图片有足够的时间加载
+        }
+    </script>
+</body>
+</html>
